@@ -54,6 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SaveSettings.cs" />
+    <Compile Include="ConnectionSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectionSettings.Designer.cs">
+      <DependentUpon>ConnectionSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataProcessing.cs" />
     <Compile Include="DatebBaseConnection.cs" />
     <Compile Include="User.cs" />
@@ -66,6 +73,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ConnectionSettings.resx">
+      <DependentUpon>ConnectionSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

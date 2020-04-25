@@ -12,17 +12,21 @@ namespace ReportOfDayWork
 {
     public partial class MainForm : Form
     {
+        DataProcessing DataProc = new DataProcessing();
         public MainForm()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e) // Кнопка - Загрузить данные из БД
         {
-            DatebBaseConnection ConnectToDB = new DatebBaseConnection();
-            ConnectToDB.fbData = ConnectToDB.ReadData("SELECT people.lname||' '||people.fname||' '||people.sname, people.peopleid,cards.cardnum, people.depid FROM cards INNER JOIN people ON(people.peopleid = CARDS.peopleid) where (people.depid != 29) AND (people.depid =1)");
+            DataProc.ArrayOfUsers = DataProc.GetUsers(1);
+        }
 
+        private void button2_Click(object sender, EventArgs e) // Кнопка - Настройки подключения
+        {
+            ConnectionSettings fr = new ConnectionSettings();
+            fr.Show();
         }
     }
 }
