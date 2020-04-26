@@ -15,7 +15,11 @@ namespace ReportOfDayWork
         DataProcessing DataProc = new DataProcessing();
         public MainForm()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            Variables.connectionSettings.Add(new ConnectionSettings("127.0.0.1", "C:\\GUARDE\\db\\guarde.fdb", "SYSDBA", "masterkey"));
+            SaveSettings saveSettings = new SaveSettings();
+            saveSettings.readerXML();
+            
         }
 
         private void button1_Click(object sender, EventArgs e) // Кнопка - Загрузить данные из БД
@@ -25,7 +29,7 @@ namespace ReportOfDayWork
 
         private void button2_Click(object sender, EventArgs e) // Кнопка - Настройки подключения
         {
-            ConnectionSettings fr = new ConnectionSettings();
+            ConnectionSettingsForm fr = new ConnectionSettingsForm();
             fr.Show();
         }
     }

@@ -10,16 +10,13 @@ namespace ReportOfDayWork
 {
     class DatebBaseConnection
     {
-        public string IP { get; set; } = "127.0.0.1";
-        public string pathToDB { get; set; } = "C:\\GUARDE\\db\\guarde.fdb";
-        public string User { get; set; } = "SYSDBA";
-        public string Password { get; set; } = "masterkey";
         public FbConnection fb;
         public FbDataReader fbData;
 
+                     
         public FbDataReader ReadData(string queryString)// метод вычитывания данных из бд 
         {
-            string connectingString = "character set = WIN1251; initial catalog = " + IP + ":" + @"" + pathToDB + "; user id = " + User + "; password = " + Password + "; ";
+            string connectingString = "character set = WIN1251; initial catalog = " + Variables.connectionSettings[0].IP + ":" + @"" + Variables.connectionSettings[0].PathToDB + "; user id = " + Variables.connectionSettings[0].User + "; password = " + Variables.connectionSettings[0].Password + "; ";
             fb = new FbConnection(connectingString); // записываем строку соединения
             if (fb.State != ConnectionState.Open)
             {                

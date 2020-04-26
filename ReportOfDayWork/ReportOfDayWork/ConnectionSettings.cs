@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ReportOfDayWork
 {
-    public partial class ConnectionSettings : Form
+    public class ConnectionSettings
     {
-        DatebBaseConnection connectionSettings = new DatebBaseConnection();
-        public ConnectionSettings()
+        public string IP { get; set; }
+        public string PathToDB { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+
+        public ConnectionSettings(string ip, string pathToDB, string user, string password)
         {
-            InitializeComponent();
-            textBox4.Text = connectionSettings.IP;
-            textBox1.Text = connectionSettings.pathToDB;
-            textBox2.Text = connectionSettings.User;
-            textBox3.Text = connectionSettings.Password;
+            IP = ip;
+            PathToDB = pathToDB;
+            User = user;
+            Password = password;
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveSettings.Props saveSettings = new SaveSettings.Props();
-            saveSettings.writteXML();
-        }
+
     }
 }

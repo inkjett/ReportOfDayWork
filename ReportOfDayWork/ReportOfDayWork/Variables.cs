@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ReportOfDayWork
 {
-    class Variables
+    public static class Variables
     {
-
+        public static List<ConnectionSettings> connectionSettings = new List<ConnectionSettings>(); // настройки поключения к БД
 
 
 

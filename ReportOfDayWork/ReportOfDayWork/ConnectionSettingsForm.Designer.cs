@@ -1,6 +1,6 @@
 ﻿namespace ReportOfDayWork
 {
-    partial class ConnectionSettings
+    partial class ConnectionSettingsForm
     {
         /// <summary>
         /// Required designer variable.

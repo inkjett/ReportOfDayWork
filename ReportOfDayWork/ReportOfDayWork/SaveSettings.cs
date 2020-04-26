@@ -8,72 +8,77 @@ using System.IO;
 
 namespace ReportOfDayWork
 {
-    class SaveSettings
+    public class PropsFields
     {
+        public string XMLFileName = Environment.CurrentDirectory + @"\settings.xml";
+        public string IP = "";
+        public string PathToDB = "";
+        public string User = "";
+        public string Password = "";
+    }
 
-        public partial class PropsFields
+    public class SaveSettings // класс работы с настройками
+    {
+        DatebBaseConnection connectionSettings = new DatebBaseConnection();        
+        public PropsFields Fields;
+        FileStream filetwich;
+        public SaveSettings()
         {
-            public string XMLFileName = Environment.CurrentDirectory + @"\settings.xml";
-            public string IP = "";
-            public string pathToDB = "";
-            public string User = "";
-            public string Password = "";
+            Fields = new PropsFields();
         }
-        public partial class Props // класс работы с настройками
+        public void CopyItemsToSer() // копирование полей с настройками из текущих настроек подключения
         {
-            DatebBaseConnection connectionSettings = new DatebBaseConnection();
-            public PropsFields Fields;
-            public Props()
+            Fields.IP = Variables.connectionSettings[0].IP;
+            Fields.PathToDB = Variables.connectionSettings[0].PathToDB;
+            Fields.User = Variables.connectionSettings[0].User;
+            Fields.Password = Variables.connectionSettings[0].Password;
+        }
+        public void CopyItemsToProgramm() // копирование полей с настройками из текущих настроек подключения
+        {
+            Variables.connectionSettings[0].IP = Fields.IP;
+            Variables.connectionSettings[0].PathToDB = Fields.PathToDB;
+            Variables.connectionSettings[0].User = Fields.User;
+            Variables.connectionSettings[0].Password = Fields.Password;
+        }
+        public void writteXML()
+        {
+            var props = new SaveSettings();
+            CopyItemsToSer();
+            XmlSerializer ser = new XmlSerializer(typeof(PropsFields));
+            TextWriter writer = new StreamWriter(Fields.XMLFileName);
+            ser.Serialize(writer, Fields);
+            writer.Close();
+        }
+        public void readerXML()
+        {            
+            if (File.Exists(Fields.XMLFileName))
             {
-                Fields = new PropsFields();
-            }
-            public void CopyItemsToSer() // копирование полей с настройками из текущих настроек подключения
-            {
-                Fields.IP = connectionSettings.IP;
-                Fields.pathToDB = connectionSettings.pathToDB;
-                Fields.User = connectionSettings.User;
-                Fields.Password = connectionSettings.Password;
-            }
-            public void CopyItemsToProgramm() // копирование полей с настройками из текущих настроек подключения
-            {
-                connectionSettings.IP = Fields.IP;
-                connectionSettings.pathToDB = Fields.pathToDB;
-                connectionSettings.User = Fields.User;
-                connectionSettings.Password = Fields.Password;
-            }
-            public void writteXML()
-            {
-                var props = new Props();
-                CopyItemsToSer();
                 XmlSerializer ser = new XmlSerializer(typeof(PropsFields));
-                TextWriter writer = new StreamWriter(Fields.XMLFileName);
-                ser.Serialize(writer, Fields);
-                writer.Close();
-            }
-            public void readerXML()
-            {
-                var props = new Props();
-                if (File.Exists(Fields.XMLFileName))
-                {
-                    XmlSerializer ser = new XmlSerializer(typeof(PropsFields));
-                    TextReader reader = new StreamReader(Fields.XMLFileName);
+                TextReader reader = new StreamReader(Fields.XMLFileName);
+                try
+                {                    
                     Fields = ser.Deserialize(reader) as PropsFields;
                     CopyItemsToProgramm();
+                    reader.Close();
                 }
-                else
+                catch // если при чтении настроек файла произошла ошибка пересоздаем файл 
                 {
-                    File.Create(Fields.XMLFileName);
-                    writteXML();
-                }
-
+                    reader.Close();// закрываем работу с файлом 
+                    FileInfo fileInf = new FileInfo(Fields.XMLFileName); // добавляем путь для удаления
+                    fileInf.Delete(); // удаляем неправильный файл 
+                    filetwich = File.Create(Fields.XMLFileName); // создаем новый
+                    filetwich.Close();
+                    writteXML();// генерируем настройки в новый файл 
+                    // добавить генерацию сообщения
+                }                
+            }
+            else
+            {
+                filetwich = File.Create(Fields.XMLFileName);
+                filetwich.Close();                
+                writteXML();   
             }
         }
-
-
-
-
-
-
-
     }
+       
 }
