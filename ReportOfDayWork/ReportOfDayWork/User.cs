@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReportOfDayWork
 {
-    class User
+    public class User
     {
         public string FullName { get; }
         public uint Id { get; }
