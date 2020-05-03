@@ -71,7 +71,7 @@ namespace ReportOfDayWork
                         arrayOfPeopleWorkTime.Add(new PeopleWorkTime(arrayOfWorkTime[i].FullName, arrayOfWorkTime[i].EventsDate.ToLongTimeString(), null, null, null)); //Добавляем строку с пользователем                    
                         for (var j = 0; j < arrayOfWorkTime.Count; j++)// ищем выход с работы
                         {
-                            if ((arrayOfWorkTime[i].PeopleId == arrayOfWorkTime[j].PeopleId) && (arrayOfWorkTime[i].EventsDate < arrayOfWorkTime[j].EventsDate) && arrayOfWorkTime[i].ReaderId != 3) // удаляем лишние временные метки между приходом на работу и уходом с работы
+                            if ((arrayOfWorkTime[i].PeopleId == arrayOfWorkTime[j].PeopleId) && (arrayOfWorkTime[i].EventsDate < arrayOfWorkTime[j].EventsDate) && (arrayOfWorkTime[j].ReaderId == 3)) // удаляем лишние временные метки между приходом на работу и уходом с работы
                             {
                                 arrayOfWorkTime.RemoveAt(j);
                                 j--;
@@ -79,7 +79,7 @@ namespace ReportOfDayWork
                             else if ((arrayOfWorkTime[i].PeopleId == arrayOfWorkTime[j].PeopleId) && (arrayOfWorkTime[j].ReaderId == 13)) // время выхода с работы
                             {
                                 arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].LeavingWork = arrayOfWorkTime[j].EventsDate.ToLongTimeString();// время ухода с работы
-                                arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].BeingAtWork = Convert.ToString(arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[i].EventsDate); // время проведенное на работе
+                                arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].BeingAtWork = Convert.ToString( (arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[i].EventsDate) < Variables.halfDay?(arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[i].EventsDate):(arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[i].EventsDate - Variables.oneHour)); // время проведенное на работе
                             }
                         }
                     }
@@ -92,15 +92,5 @@ namespace ReportOfDayWork
             }                                                               
             return arrayOfPeopleWorkTime;
         }
-
-
-
-
-
-
-
-
-
-
     }
 }
