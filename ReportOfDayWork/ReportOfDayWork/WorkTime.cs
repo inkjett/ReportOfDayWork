@@ -6,24 +6,21 @@ using System.Threading.Tasks;
 
 namespace ReportOfDayWork
 {
-    class WorkTime
+    public class WorkTime
     {
-        public DateTime Eventsdate { get; }
+        public DateTime EventsDate { get; }
         public uint Cardnum { get; }        
-        public uint Readerid { get; }
-        public uint Peopleid { get; }        
+        public uint ReaderId { get; }
+        public uint PeopleId { get; }        
         public string FullName { get; }
 
         public WorkTime(DateTime eventsdate, uint cardnum, uint readerid, uint peopleid, string fullName)
         {
-            Eventsdate = eventsdate;
+            EventsDate = eventsdate;
             Cardnum = cardnum;
-            Readerid = readerid;
-            Peopleid = peopleid;
+            ReaderId = readerid;
+            PeopleId = peopleid;
             FullName = fullName;
         }
-
-
-
     }
 }

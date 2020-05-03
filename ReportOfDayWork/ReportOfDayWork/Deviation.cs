@@ -14,8 +14,7 @@ namespace ReportOfDayWork
         public string DevFrom { get; }
         public string DevTo { get; }
         public uint DeviationId { get; }
-
-
+        
         public Deviation(uint peopleId, uint devType, string devFrom, string devTo, uint deviationId)
         {
             PeopleId = peopleId;
@@ -24,9 +23,5 @@ namespace ReportOfDayWork
             DevTo = devTo;
             DeviationId = deviationId;
         }
-
-
-
-
     }
 }

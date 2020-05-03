@@ -25,6 +25,7 @@ namespace ReportOfDayWork
         {
             Variables.ArrayOfUsers = dataProcessing.GetUsers(1); // загружаем массив пользователей
             Variables.ArrayOfDeviation = dataProcessing.GetDeviation(); // загружаем массив отсутствия не рабочем месте
+            Variables.ArrayOfPeopleWorkTime = dataProcessing.GetPeopleWorkTime("04.02.2020",1);
         }
 
         private void button2_Click(object sender, EventArgs e) // Кнопка - Настройки подключения
@@ -35,7 +36,7 @@ namespace ReportOfDayWork
 
         private void button3_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = Variables.ArrayOfDeviation;
+            dataGridView1.DataSource = Variables.ArrayOfPeopleWorkTime;
            //dataProcessing.ShowInDataGrid(Variables.ArrayOfUsers,3);
         }
     }
