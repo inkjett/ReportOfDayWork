@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ReportOfDayWork
 {
     class DataProcessing
@@ -39,34 +40,12 @@ namespace ReportOfDayWork
                 {
                     if ((arrayOfuser[u].Id == deviations[d].PeopleId) && (deviations[d].DevFrom <= arrayOfWorkTime[0].EventsDate) && (arrayOfWorkTime[0].EventsDate <= deviations[d].DevTo))
                     {
-                        switch (deviations[d].DevType)
-                        {
-                            case 0:
-                                arrayOfPeopleWorkTime[u].Deviation = "больничный";
-                                break;
-                            case 1:
-                                arrayOfPeopleWorkTime[u].Deviation = "отпуск";
-                                break;
-                            case 2:
-                                arrayOfPeopleWorkTime[u].Deviation = "командировка";
-                                break;
-                            case 3:
-                                arrayOfPeopleWorkTime[u].Deviation = "удаленная работа";
-                                break;
-                            case 4:
-                                arrayOfPeopleWorkTime[u].Deviation = "отгул";
-                                break;
-                        }
+                        arrayOfPeopleWorkTime[u].Deviation = Variables.deviationName.Select((i,index)=> new {i, index }).Where(n=>n.index == deviations[d].DevType).ToList()[0].i; // проходим по массиву данных об отсутствии на рабочем месте
                         break;
                     }
                 }
-
             }
             return arrayOfPeopleWorkTime;
         }
-
-
-
-
     }
 }
