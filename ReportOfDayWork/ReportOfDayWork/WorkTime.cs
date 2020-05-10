@@ -9,18 +9,16 @@ namespace ReportOfDayWork
     public class WorkTime
     {
         public DateTime EventsDate { get; }
-        public uint Cardnum { get; }        
-        public uint ReaderId { get; }
-        public uint PeopleId { get; }        
-        public string FullName { get; }
+        public uint Cardnum { get; }        // номер карты
+        public uint ReaderId { get; }// номер считывателя
+        public uint PeopleId { get; }// номер пользоватлетя в БД        
 
-        public WorkTime(DateTime eventsdate, uint cardnum, uint readerid, uint peopleid, string fullName)
+        public WorkTime(DateTime eventsdate, uint cardnum, uint readerid, uint peopleid)
         {
             EventsDate = eventsdate;
             Cardnum = cardnum;
             ReaderId = readerid;
             PeopleId = peopleid;
-            FullName = fullName;
         }
     }
 }
