@@ -8,15 +8,15 @@ namespace ReportOfDayWork
 {
     public class User
     {
-        public string FullName { get; }
+        public string FullName { get; } // полное имя
         public uint Id { get; }
-        public uint BindingId { get; }
+        public uint Сardnum { get; }
 
-        public User(string fullName, uint id, uint bindingId)
+        public User(string fullName, uint id, uint cardnum)
         {
             FullName = fullName;
             Id = id;
-            BindingId = bindingId;
+            Сardnum = cardnum;
         }
     }
 }

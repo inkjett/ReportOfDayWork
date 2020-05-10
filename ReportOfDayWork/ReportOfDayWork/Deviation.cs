@@ -11,11 +11,11 @@ namespace ReportOfDayWork
 
         public uint PeopleId { get; }
         public uint DevType { get; }
-        public string DevFrom { get; }
-        public string DevTo { get; }
+        public DateTime DevFrom { get; }
+        public DateTime DevTo { get; }
         public uint DeviationId { get; }
         
-        public Deviation(uint peopleId, uint devType, string devFrom, string devTo, uint deviationId)
+        public Deviation(uint peopleId, uint devType, DateTime devFrom, DateTime devTo, uint deviationId)
         {
             PeopleId = peopleId;
             DevType = devType;

@@ -12,7 +12,9 @@ namespace ReportOfDayWork
 {
     public partial class MainForm : Form
     {
+        GetData getData = new GetData();
         DataProcessing dataProcessing = new DataProcessing();
+
         public MainForm()
         {
             InitializeComponent();
@@ -23,9 +25,10 @@ namespace ReportOfDayWork
 
         private void button1_Click(object sender, EventArgs e) // Кнопка - Загрузить данные из БД
         {
-            Variables.ArrayOfUsers = dataProcessing.GetUsers(1); // загружаем массив пользователей, 
-            Variables.ArrayOfDeviation = dataProcessing.GetDeviation(); // загружаем массив отсутствия не рабочем месте
-            Variables.ArrayOfWorkTime = dataProcessing.GetPeopleWorkTime("04.02.2020", "04.03.2020", 1); // получение данных об отработанном времени за период  + выбор департамента
+            Variables.ArrayOfUsers = getData.GetUsers(1); // загружаем массив пользователей, 
+            Variables.ArrayOfDeviation = getData.GetDeviation(); // загружаем массив отсутствия не рабочем месте
+            Variables.ArrayOfWorkTime = getData.GetPeopleWorkTime("04.02.2020", "04.02.2020", 1); // получение данных об отработанном времени за период  + выбор департамента
+            Variables.ArrayOfPeopleWorkTimeDay = dataProcessing.PeopleWorkTimeDay(Variables.ArrayOfUsers, Variables.ArrayOfWorkTime, Variables.ArrayOfDeviation);
         }
 
         private void button2_Click(object sender, EventArgs e) // Кнопка - Настройки подключения
@@ -36,7 +39,7 @@ namespace ReportOfDayWork
 
         private void button3_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = Variables.ArrayOfWorkTime;
+            dataGridView1.DataSource = Variables.ArrayOfPeopleWorkTimeDay;
            //dataProcessing.ShowInDataGrid(Variables.ArrayOfUsers,3);
         }
     }
