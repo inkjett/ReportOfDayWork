@@ -39,8 +39,15 @@ namespace ReportOfDayWork
 
         private void button3_Click(object sender, EventArgs e)
         {
+            
             dataGridView1.DataSource = Variables.ArrayOfPeopleWorkTimeDay;
-           //dataProcessing.ShowInDataGrid(Variables.ArrayOfUsers,3);
+            dataGridView1.ColumnHeadersVisible = false;
+            dataGridView1.Columns[0].Width = 180;
+            dataGridView1.Columns[1].Width = 90;
+            dataGridView1.Columns[2].Width = 90;
+            dataGridView1.Columns[3].Width = 90;
+            dataGridView1.Columns[4].Width = 90;
+            //dataProcessing.ShowInDataGrid(Variables.ArrayOfUsers,3);
         }
     }
 }
