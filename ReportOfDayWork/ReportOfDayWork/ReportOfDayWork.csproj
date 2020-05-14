@@ -57,6 +57,7 @@
     <Compile Include="ConnectionSettings.cs" />
     <Compile Include="DataProcessing.cs" />
     <Compile Include="Deviation.cs" />
+    <Compile Include="PeopleWorkTimeMonth.cs" />
     <Compile Include="SampleColumn.cs" />
     <Compile Include="SaveSettings.cs" />
     <Compile Include="ConnectionSettingsForm.cs">

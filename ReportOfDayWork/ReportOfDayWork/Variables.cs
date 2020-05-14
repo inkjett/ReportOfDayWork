@@ -15,7 +15,8 @@ namespace ReportOfDayWork
         public static List<User> ArrayOfUsers = new List<User>(); // массив пользователей
         public static List<Deviation> ArrayOfDeviation = new List<Deviation>(); // массив отсутсвия на рабочем месте
         public static List<WorkTime> ArrayOfWorkTime = new List<WorkTime>(); // массив отработанного времени (выгрузка из БД)
-        public static List<PeopleWorkTimeDay> ArrayOfPeopleWorkTimeDay = new List<PeopleWorkTimeDay>(); // массив отработанного времени одного дня        
+        public static List<PeopleWorkTimeDay> ArrayOfPeopleWorkTimeDay = new List<PeopleWorkTimeDay>(); // массив отработанного времени одного дня
+        public static List<List<string>> ArrayOfPeopleWorkTimeMonth = new List<List<string>>(); //массив отработанного времени в месяц
         public static string[] deviationName = new string[5] {"больничный", "отпуск", "командировка", "удаленная работа", "отгул"}; // причины отсутсвия на рабочем месте
         public static uint[] inOffice = new uint[4] { 35, 17, 26, 3}; // считыватели на приход в офис 35, 17, 26 - ИнфтехМск, 3 - ИнфтехУфа
         public static uint[] outOffice = new uint[4] { 43, 25, 34, 13 }; // считыватели на уход из офиса 43, 25, 34 - ИнфтехМск, 13 - ИнфтехУфа

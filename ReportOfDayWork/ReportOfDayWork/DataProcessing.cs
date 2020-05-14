@@ -10,74 +10,60 @@ namespace ReportOfDayWork
 {
     class DataProcessing
     {
-
         public List<PeopleWorkTimeDay> PeopleWorkTimeDay(List<User> arrayOfuser, List<WorkTime> arrayOfWorkTime, List<Deviation> deviations) // метод сборки массива об отработанном времени за день
         {
             List<PeopleWorkTimeDay> arrayOfPeopleWorkTime = new List<PeopleWorkTimeDay>();
-
             arrayOfPeopleWorkTime.Add(new PeopleWorkTimeDay("ФИО сотрудника", "Время прихода сотрудника", "Время ухода сотрудника", "Время проведенное в офисе", "Причина отсутствия"));
             for (var u = 0; u < arrayOfuser.Count; u++) //идем по массиву пользователей
             {
                 arrayOfPeopleWorkTime.Add(new PeopleWorkTimeDay(arrayOfuser[u].FullName, null, null, null, null));// записываем ФИО пользователя
-                for (var w = 0; w < arrayOfWorkTime.Count; w++) // идем по массиву с данными об отработаном времени 
-                {
-                    if ((Variables.inOffice.ToList().IndexOf(arrayOfWorkTime[w].ReaderId) != -1) && (arrayOfuser[u].Сardnum == arrayOfWorkTime[w].Cardnum))// проверка прихода на работу денные о считывателях берем из массива inOffice
-                    {                        
-                        arrayOfPeopleWorkTime[u+1].ComingToWork = arrayOfWorkTime[w].EventsDate.ToLongTimeString();// добавляем время прихода на работу     
-                        for (var j = 0; j < arrayOfWorkTime.Count; j++)// ищем выход с работы
-                        {
-                            if ((arrayOfWorkTime[w].PeopleId == arrayOfWorkTime[j].PeopleId) && (arrayOfWorkTime[w].EventsDate < arrayOfWorkTime[j].EventsDate) && (Variables.inOffice.ToList().IndexOf(arrayOfWorkTime[j].ReaderId) != -1)) // удаляем лишние временные метки между приходом на работу и уходом с работы
-                            {
-                                arrayOfWorkTime.RemoveAt(j);
-                                j--;
-                            }
-                            else if ((arrayOfWorkTime[w].PeopleId == arrayOfWorkTime[j].PeopleId) && (Variables.outOffice.ToList().IndexOf(arrayOfWorkTime[j].ReaderId) != -1)) // время выхода с работы данные о считывателях берем из массива outOffice
-                            {
-                                arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].LeavingWork = arrayOfWorkTime[j].EventsDate.ToLongTimeString();// время ухода с работы
-                                arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].BeingAtWork = (arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[w].EventsDate) < Variables.halfDay ? (arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[w].EventsDate).ToString() : (arrayOfWorkTime[j].EventsDate - arrayOfWorkTime[w].EventsDate - Variables.oneHour).ToString(); // вычисление времени проведенного на работе
-                            }
-                        }
-                    }
-                }
-                for (var d = 0; d < deviations.Count; d++)//ищем не находится ли данный пользователь в отпуске итд
-                {
-                    if ((arrayOfuser[u].Id == deviations[d].PeopleId) && (deviations[d].DevFrom <= arrayOfWorkTime[0].EventsDate) && (arrayOfWorkTime[0].EventsDate <= deviations[d].DevTo)) // проверяем на id прользователя и временные рамки
-                    {
-                        arrayOfPeopleWorkTime[u+1].Deviation = Variables.deviationName.Select((i,index)=> new {i, index }).Where(n=>n.index == deviations[d].DevType).ToList()[0].i; // проходим по массиву данных об отсутствии на рабочем месте
-                        break;
-                    }
-                }
-            }
+
+                //ячейка времени прихода на работу
+                var ComeToWork = arrayOfWorkTime.Where(o => (o.PeopleId == arrayOfuser[u].Id) && (Variables.inOffice.ToList().IndexOf(o.ReaderId) != -1)).ToList(); // пользователь
+                ComeToWork.OrderBy(o => o.EventsDate);//сортировка
+                arrayOfPeopleWorkTime[u + 1].ComingToWork = ComeToWork.Count!=0? ComeToWork[0].EventsDate.ToLongTimeString():"";// добавляем время прихода на работу 
+                
+                //ячейка времени ухода с работы
+                var LeaveWork = arrayOfWorkTime.Where(o => (o.PeopleId == arrayOfuser[u].Id) && (Variables.outOffice.ToList().IndexOf(o.ReaderId) != -1)).ToList();
+                LeaveWork.OrderBy(o => o.EventsDate);//сортировка
+                arrayOfPeopleWorkTime[u + 1].LeavingWork = LeaveWork.Count != 0 ? LeaveWork[LeaveWork.Count-1].EventsDate.ToLongTimeString() : "";// добавляем время прихода на работу 
+                
+                //ячейка времени проведенного на работе
+                arrayOfPeopleWorkTime[arrayOfPeopleWorkTime.Count - 1].BeingAtWork = (ComeToWork.Count != 0) && (LeaveWork.Count != 0) ? ((LeaveWork[LeaveWork.Count - 1].EventsDate - ComeToWork[0].EventsDate) < Variables.halfDay ? (LeaveWork[LeaveWork.Count - 1].EventsDate - ComeToWork[0].EventsDate).ToString() : (LeaveWork[LeaveWork.Count - 1].EventsDate - ComeToWork[0].EventsDate - Variables.oneHour).ToString()):"";
+                
+                //ячейка отсутсвия на рабочем месте
+                var deviation = deviations.Where(o => ((o.PeopleId == arrayOfuser[u].Id) && (o.DevFrom <= arrayOfWorkTime[0].EventsDate) && (arrayOfWorkTime[0].EventsDate <= o.DevTo))).ToList();
+                arrayOfPeopleWorkTime[u + 1].Deviation = deviation.Count != 0 ? Variables.deviationName.Select((i, index) => new { i, index }).Where(n => n.index == deviation[0].DevType).ToList()[0].i : arrayOfPeopleWorkTime[u + 1].Deviation = ""; // проходим по массиву данных об отсутствии на рабочем месте, заменяем значение по индексу массива
+
+        }
             return arrayOfPeopleWorkTime;
         }
         //---------
 
-
-        public DataGridView DataToGrid(List<PeopleWorkTimeDay> peopleWorkTimeDay)
+        public List<List<string>> PeopleWorkTimeMonth(List<User> arrayOfuser, List<WorkTime> arrayOfWorkTime, List<Deviation> deviations)
         {
-            DataGridView dataGridView = new DataGridView();
 
-            dataGridView.RowCount = peopleWorkTimeDay.Count;
-            dataGridView.ColumnCount = 5;
-            dataGridView.Columns[0].Visible = true;
-            dataGridView.Columns[0].Width = 180;
-            dataGridView.Columns[1].Width = 60;
-            dataGridView.Columns[2].Width = 60;
-            dataGridView.Columns[3].Width = 60;
-            dataGridView.Columns[4].Width = 60;
+            // в разработке
+            List<List<string>> arrayOfPeopleWorkTime = new List<List<string>>();
+            List<string> row = new List<string>();
+            row = new List<string>();
+            arrayOfPeopleWorkTime.Add(row);
 
-
-            for (int i = 0; i < peopleWorkTimeDay.Count; i++)
+            arrayOfPeopleWorkTime[0].Add("ФИО сотрудника");
+            var lastDay = DateTime.DaysInMonth(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month); // последний день месяца            
+            //arrayOfPeopleWorkTime[0].Select (o=> o.Count() <= lastDay).ToList(new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, 1).ToShortDateString());
+            //arrayOfPeopleWorkTime[0].Select(o => { if(o.Count() <= lastDay) lastDay++; });
+            arrayOfPeopleWorkTime[0].AddRange(Enumerable.Range(1, lastDay).Select(o => Convert.ToString(new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, o).ToShortDateString())));
+            for (int t = 0; t < lastDay; t++)//добавление дат в первую строку
             {
-                dataGridView.Rows[i].Cells[0].Value = String.Format("{0}", peopleWorkTimeDay[i].FullName);
-                dataGridView.Rows[i].Cells[1].Value = String.Format("{0}", peopleWorkTimeDay[i].ComingToWork);
+                arrayOfPeopleWorkTime[0].Add(Convert.ToString(new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, t + 1).ToShortDateString()));
             }
 
-            return dataGridView;
+
+
+
+            return arrayOfPeopleWorkTime;
         }
-
-
-
 
     }
 }

@@ -29,6 +29,8 @@ namespace ReportOfDayWork
             Variables.ArrayOfDeviation = getData.GetDeviation(); // загружаем массив отсутствия не рабочем месте
             Variables.ArrayOfWorkTime = getData.GetPeopleWorkTime("04.02.2020", "04.02.2020", 1); // получение данных об отработанном времени за период  + выбор департамента
             Variables.ArrayOfPeopleWorkTimeDay = dataProcessing.PeopleWorkTimeDay(Variables.ArrayOfUsers, Variables.ArrayOfWorkTime, Variables.ArrayOfDeviation);
+            //Variables.ArrayOfPeopleWorkTimeMonth = dataProcessing.PeopleWorkTimeMonth(Variables.ArrayOfUsers, Variables.ArrayOfWorkTime, Variables.ArrayOfDeviation);
+
         }
 
         private void button2_Click(object sender, EventArgs e) // Кнопка - Настройки подключения
@@ -38,8 +40,7 @@ namespace ReportOfDayWork
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
-            
+        {            
             dataGridView1.DataSource = Variables.ArrayOfPeopleWorkTimeDay;
             dataGridView1.ColumnHeadersVisible = false;
             dataGridView1.Columns[0].Width = 180;
