@@ -22,91 +22,55 @@ namespace ReportOfDayWork
                 var comingToWork = cameToWorkTimesOrdered.Count != 0 ?
                     cameToWorkTimesOrdered.FirstOrDefault()?.EventsDate.ToLongTimeString() :
                     string.Empty;// добавляем время прихода на работу 
-                
+
                 //ячейка времени ухода с работы
                 var leftFromWorkTimesOrdered = workTimes.Where(o => (o.PeopleId == user.Id) && (Variables.outOffice.Contains(o.ReaderId)))
                     .OrderBy(o => o.EventsDate).ToList();
                 var leavingFromWork = leftFromWorkTimesOrdered.Count != 0 ?
                     leftFromWorkTimesOrdered.LastOrDefault()?.EventsDate.ToLongTimeString() : string.Empty;// добавляем время прихода на работу 
-                
+
                 //ячейка времени проведенного на работе
-                var beingAtWork =  leftFromWorkTimesOrdered.Count != 0 ?
+                var beingAtWork = (cameToWorkTimesOrdered.Count != 0) && (leftFromWorkTimesOrdered.Count != 0) ?
                     ((leftFromWorkTimesOrdered.LastOrDefault()?.EventsDate - cameToWorkTimesOrdered[0].EventsDate) < Variables.halfDay ?
                         (leftFromWorkTimesOrdered.LastOrDefault()?.EventsDate - cameToWorkTimesOrdered.FirstOrDefault()?.EventsDate).ToString() :
                         (leftFromWorkTimesOrdered.LastOrDefault()?.EventsDate - cameToWorkTimesOrdered.FirstOrDefault()?.EventsDate - Variables.oneHour).ToString()) : string.Empty;
-                
+
                 //ячейка отсутсвия на рабочем месте
                 var deviationsFiltered = deviations.Where(o => ((o.PeopleId == user.Id) && (o.DevFrom <= workTimes[0].EventsDate) && (workTimes[0].EventsDate <= o.DevTo))).ToList();
-                var deviation = deviationsFiltered.Count != 0 ? 
+                var devaition = deviationsFiltered.Count != 0 ?
                     Variables.deviationName.Select((i, index) => new { i, index }).Where(n => n.index == deviationsFiltered.FirstOrDefault()?.DevType).ToList()[0].i :
                     string.Empty; // проходим по массиву данных об отсутствии на рабочем месте, заменяем значение по индексу массива
 
-                peopleWorkedTimes.Add(new PeopleWorkTimeDay(user.FullName, comingToWork, leavingFromWork, beingAtWork, deviation));
+                peopleWorkedTimes.Add(new PeopleWorkTimeDay(user.FullName, comingToWork, leavingFromWork, beingAtWork, devaition));
             }
             return peopleWorkedTimes;
         }
         //---------
 
-        public IEnumerable<PeopleWorkedTimeInMonth> PeopleWorkTimeMonth(List<User> users, List<WorkTime> workedTimes, List<Deviation> deviations)
+        public List<List<string>> PeopleWorkTimeMonth(List<User> arrayOfuser, List<WorkTime> arrayOfWorkTime, List<Deviation> deviations)
         {
-            var result = new List<PeopleWorkedTimeInMonth>(users.Count);
 
-            foreach (var user in users)
+            // в разработке
+            List<List<string>> arrayOfPeopleWorkTime = new List<List<string>>();
+            List<string> row = new List<string>();
+            row = new List<string>();
+            arrayOfPeopleWorkTime.Add(row);
+            var temp = new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, 1).ToLongDateString();
+            arrayOfPeopleWorkTime[0].Add("ФИО сотрудника");
+            var lastDay = DateTime.DaysInMonth(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month); // последний день месяца            
+
+            //arrayOfPeopleWorkTime[0].AddRange(Enumerable.Range(1, lastDay).Select(o => Convert.ToString(new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, o).ToShortDateString())).ToList());
+            arrayOfPeopleWorkTime[0].AddRange(Enumerable.Range(1, lastDay).Select(o => (new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, o).ToLongDateString())));
+            /*for (int t = 0; t < lastDay; t++)//добавление дат в первую строку
             {
-                var groupsByPeopleId = workedTimes.GroupBy(m => m.PeopleId);
+                arrayOfPeopleWorkTime[0].Add(Convert.ToString(new DateTime(arrayOfWorkTime[0].EventsDate.Year, arrayOfWorkTime[0].EventsDate.Month, t + 1).ToShortDateString()));
+            }*/
 
-                var workedTimeInMoths = new List<WorkedTimeInDay>();
-                
-                foreach (var month in groupsByPeopleId)
-                {
-                    foreach (var workTime in month.GroupBy(x => x.EventsDate.Day))
-                    {
-                        var workedTimesByOrder = workTime.OrderBy(tw => tw.EventsDate).ToList();
 
-                        //ячейка времени проведенного на работе
-                        var beingAtWork = workedTimesByOrder.Count != 0 ?
-                            ((workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate) < Variables.halfDay ?
-                                (workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate) :
-                                (workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate - Variables.oneHour)) : null;
 
-                        workedTimeInMoths.Add(new WorkedTimeInDay(workTime.First().EventsDate.Day, beingAtWork));
-                    }
-                }
 
-                result.Add(new PeopleWorkedTimeInMonth(user.FullName, workedTimeInMoths));
-            }
-
-            return result;
+            return arrayOfPeopleWorkTime;
         }
 
-        public int GetDaysInMonth(DateTime date) => DateTime.DaysInMonth(date.Year, date.Month);
-
     }
-
-    public class PeopleWorkedTimeInMonth
-    {
-        public string FullName { get; }
-
-        public List<WorkedTimeInDay> WorkedTimeDaysInMonth { get; }
-
-        public PeopleWorkedTimeInMonth(string fullName, List<WorkedTimeInDay> workedTimeDaysInMonth)
-        {
-            FullName = fullName;
-            WorkedTimeDaysInMonth = workedTimeDaysInMonth;
-        }
-    }
-
-    public class WorkedTimeInDay
-    {
-        public int Day { get; }
-
-        public TimeSpan? WorkedTime { get; }
-
-        public WorkedTimeInDay(int day, TimeSpan? workedTime)
-        {
-            Day = day;
-            WorkedTime = workedTime;
-        }
-    }
-
 }
