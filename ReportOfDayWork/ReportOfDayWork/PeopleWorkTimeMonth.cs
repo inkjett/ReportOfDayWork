@@ -15,8 +15,6 @@ namespace ReportOfDayWork
         public PeopleWorkTimeMonth(string fullName, int dayCount)
         {
             FullName = fullName;
-
-
         }
     }
 }

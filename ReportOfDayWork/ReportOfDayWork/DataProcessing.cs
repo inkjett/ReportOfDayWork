@@ -47,32 +47,37 @@ namespace ReportOfDayWork
         }
         //---------
 
-        public IEnumerable<PeopleWorkedTimeInMonth> PeopleWorkTimeMonth(List<User> users, List<WorkTime> workedTimes, List<Deviation> deviations)
+        public IEnumerable<PeopleWorkedTimeInMonth> PeopleWorkTimeMonth(List<User> users, List<WorkTime> workedTimes, List<Deviation> deviations) // метод сборки массива об отработанном времени в месяц
         {
-            var result = new List<PeopleWorkedTimeInMonth>(users.Count);
+            var result = new List<PeopleWorkedTimeInMonth>(users.Count); // массив по количеству пользователей
+            var groupsByPeopleId = workedTimes.GroupBy(m => m.PeopleId); // получаем сгрупированный массив по PeopleId с сгурперованными эвентами
 
-            foreach (var user in users)
+            foreach (var user in users) // проходим по каждому пользователю в массиве пользователей
             {
-                var groupsByPeopleId = workedTimes.GroupBy(m => m.PeopleId);
-
-                var workedTimeInMoths = new List<WorkedTimeInDay>();
+                var workedTimeInMoths = new List<WorkedTimeInDay>();  //массив отработанного времени в месяц
                 
-                foreach (var month in groupsByPeopleId)
+                foreach (var month in groupsByPeopleId) //для каждого месяца в массиве сгрупированных эвентов по пользователям 
                 {
-                    foreach (var workTime in month.GroupBy(x => x.EventsDate.Day))
-                    {
-                        var workedTimesByOrder = workTime.OrderBy(tw => tw.EventsDate).ToList();
-
-                        //ячейка времени проведенного на работе
-                        var beingAtWork = workedTimesByOrder.Count != 0 ?
+                    foreach (var workTime in month.GroupBy(x => x.EventsDate.Day)) // для каждого эвента в сгруперованном массиве в месяце
+                    {                       
+                        var workedTimesByOrder = workTime.OrderBy(tw => tw.EventsDate).ToList(); // массив отработанного времени с сортировкой по возрастанию .OrderBy
+                        TimeSpan? beingAtWork = null; // определяем переменную сколько человек был на работе
+                        if (user.Сardnum == workedTimesByOrder[0].Cardnum) // проверяем на соотвествие номера карты и записи в журнале
+                        {
+                            beingAtWork = workedTimesByOrder.Count != 0 ?
                             ((workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate) < Variables.halfDay ?
                                 (workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate) :
-                                (workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate - Variables.oneHour)) : null;
+                                (workedTimesByOrder.LastOrDefault()?.EventsDate - workedTimesByOrder.FirstOrDefault()?.EventsDate - Variables.oneHour)) : null;//ячейка времени проведенного на работе
 
-                        workedTimeInMoths.Add(new WorkedTimeInDay(workTime.First().EventsDate.Day, beingAtWork));
+                            workedTimeInMoths.Add(new WorkedTimeInDay(workTime.First().EventsDate.Day, beingAtWork)); // заполняем ячейку записью
+                        }
+                        else
+                        {
+                            workedTimeInMoths.Add(new WorkedTimeInDay(workTime.First().EventsDate.Day, beingAtWork)); // если ничего не нашлось то будет пустая ячейка
+                        }
+                        
                     }
                 }
-
                 result.Add(new PeopleWorkedTimeInMonth(user.FullName, workedTimeInMoths));
             }
 
@@ -80,7 +85,6 @@ namespace ReportOfDayWork
         }
 
         public int GetDaysInMonth(DateTime date) => DateTime.DaysInMonth(date.Year, date.Month);
-
     }
 
     public class PeopleWorkedTimeInMonth
